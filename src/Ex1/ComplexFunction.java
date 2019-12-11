@@ -2,7 +2,6 @@ package Ex1;
 
 import java.util.Stack;
 
-import javax.management.RuntimeErrorException;
 
 public class ComplexFunction implements complex_function {
 	ComplexTree tree=new ComplexTree();
@@ -36,7 +35,7 @@ public class ComplexFunction implements complex_function {
 	public ComplexFunction(function f1) {
 		tree.root=new Node(f1,null,Operation.None);
 	}
-
+	
 	@Override
 	public double f(double x) {
 		return treefx(tree.root, x);

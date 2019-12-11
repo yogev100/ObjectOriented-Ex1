@@ -1,4 +1,4 @@
-package Ex1;
+package myMath;
 
 import java.util.Comparator;
 
@@ -9,5 +9,4 @@ public class Monom_Comperator implements Comparator<Monom> {
 		int dp = o2.get_power() - o1.get_power();
 		return dp;
 	}
-
 }

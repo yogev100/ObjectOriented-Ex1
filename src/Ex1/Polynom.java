@@ -1,10 +1,8 @@
 package Ex1;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.function.Predicate;
 
 /**
  * This class represents a Polynom with add, multiply functionality, it also should support the following:

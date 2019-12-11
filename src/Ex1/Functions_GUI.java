@@ -3,24 +3,17 @@ import java.awt.Color;
 import java.awt.Font;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.lang.reflect.Array;
-import java.nio.BufferUnderflowException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.function.Function;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-
-import com.google.gson.Gson;
 
 
 public class Functions_GUI implements functions{
@@ -28,28 +21,13 @@ public class Functions_GUI implements functions{
 	public static void main(String[] args) throws IOException {
 		String file="C:\\Users\\Yogev\\Desktop\\.metadata\\.metadata\\ObjectOrientedEx2\\functions.json";
 		Functions_GUI s=new Functions_GUI();
-		s.add(new ComplexFunction(new Polynom("x"), new Polynom("2x"), Operation.Plus));
-		s.add(new Polynom("x^2"));
-		s.add(new Polynom("x^3"));
-		s.add(new Polynom("x^4"));
-		s.add(new Polynom("x^5"));
-		s.add(new Polynom("x^6"));
-		s.add(new Polynom("x^7"));
-		s.add(new Polynom("x"));
-		//		s.saveToFile(file);
-		//s.initFromFile("C:\\Users\\Yogev\\Desktop\\function_file.txt");
-		//		Range x= new Range(-5, 5);
-		//		Range y= new Range(-5, 5);
-		//s.drawFunctions(500,500, x, y, 100);
-		//s.drawFunctions("C:\\\\Users\\\\Yogev\\\\Desktop\\\\.metadata\\\\.metadata\\\\ObjectOrientedEx2\\\\GUI_params.json");
-		//s.saveToFile("C:\\Users\\Yogev\\Desktop\\newfunction.csv");
-		Functions_GUI g=new Functions_GUI();
-		g.initFromFile("function_file.txt");
-		g.drawFunctions("GUI_params.txt");
+		ComplexFunction cf =new ComplexFunction();
+		s.initFromFile("function_file.txt");
+		s.drawFunctions("GUI_params.txt");
 	}
 
 
-	LinkedList <function> c=new LinkedList<function>();// the object that we store the functions.
+	public LinkedList <function> c=new LinkedList<function>();
 
 
 	@Override
@@ -65,6 +43,7 @@ public class Functions_GUI implements functions{
 					this.add(cf.initFromString(line));//add the function to the collection
 				}
 			}
+			br.close();
 		} 
 		catch (IOException e) {
 			System.out.println("File not found");
@@ -220,7 +199,7 @@ public class Functions_GUI implements functions{
 		return c.toArray();
 	}
 
-	@Override//@@@@@@@@@@@@@@@@@@@@
+	@Override
 	public <T> T[] toArray(T[] a) {
 		return c.toArray(a);
 	}

@@ -1,63 +1,97 @@
 
-package Ex1;
+package myMath;
 
 import java.util.Comparator;
 
 /**
- * This class represents a simple "Monom" of shape a*x^b, where a is a real number and a is an integer (summed a none negative), 
- * see: https://en.wikipedia.org/wiki/Monomial 
- * The class implements function and support simple operations as: construction, value at x, derivative, add and multiply. 
+ * This class represents a simple "Monom" of shape a*x^b, where a is a real
+ * number and a is an integer (summed a none negative), see:
+ * https://en.wikipedia.org/wiki/Monomial The class implements function and
+ * support simple operations as: construction, value at x, derivative, add and
+ * multiply.
+ * 
  * @author Boaz
  *
  */
-public class Monom implements function{
-	public static final Monom ZERO = new Monom(0,0);
-	public static final Monom MINUS1 = new Monom(-1,0);
-	public static final double EPSILON = 0.0000001;
+public class Monom implements function {
+	public static final Monom ZERO = new Monom(0, 0);
+	public static final Monom MINUS1 = new Monom(-1, 0);
+	public static final double EPSILON = 0.00000001;
 	public static final Comparator<Monom> _Comp = new Monom_Comperator();
-	public static Comparator<Monom> getComp() {return _Comp;}
-	public Monom(double a, int b){
-		this.set_coefficient(a);
-		this.set_power(b);
+
+	public static Comparator<Monom> getComp() {
+		return _Comp;
 	}
-	/**
-	 * copy constructor
-	 * @param ot - monom type variable
-	 */
+
+	public Monom(double a, int b) {
+		// if the coefficient is 0, all the monom is 0.
+		if (a == 0) {
+			this.set_coefficient(0);
+			this.set_power(0);
+		} else {
+			this.set_coefficient(a);
+			this.set_power(b);
+		}
+	}
+
 	public Monom(Monom ot) {
-		this(ot.get_coefficient(), ot.get_power());
+		// if the coefficient is 0, all the monom is 0.
+		if (ot._coefficient == 0) {
+			this.set_coefficient(0);
+			this.set_power(0);
+		} else {
+			this.set_coefficient(ot.get_coefficient());
+			this.set_power(ot.get_power());
+		}
 	}
 
 	public double get_coefficient() {
 		return this._coefficient;
 	}
+
 	public int get_power() {
 		return this._power;
 	}
-	/** 
+
+	/**
 	 * this method returns the derivative monom of this.
+	 * 
 	 * @return
 	 */
 	public Monom derivative() {
-		if(this.get_power()==0) {return getNewZeroMonom();}
-		return new Monom(this.get_coefficient()*this.get_power(), this.get_power()-1);
+		if (this.get_power() == 0) {
+			return getNewZeroMonom();
+		}
+		return new Monom(this.get_coefficient() * this.get_power(), this.get_power() - 1);
 	}
+
 	/**
-	 * this method returns the value of f(x) in x point.
+	 * return the y value of the monom in point x
+	 * 
+	 * @param x the x value in f(x)=y function of monom.
 	 */
 	public double f(double x) {
-		double ans=0;
+		double ans = 0;
 		double p = this.get_power();
-		ans = this.get_coefficient()*Math.pow(x, p);
+		ans = this.get_coefficient() * Math.pow(x, p);
 		return ans;
-	} 
-	public boolean isZero() {return this.get_coefficient() == 0;}
-	// ***************** add your code below **********************
+	}
+
 	/**
-	 * function that check if the string is valid, and split the string to some cases and in the end,
-	 * put the right coefficient and power to the new monom.
-	 * if the string includes invalid number, the function will throw an exception
-	 * @param s - get monom as string and build a monom object
+	 * function that checks if the this monom is zero.
+	 * 
+	 * @return true if this monon is zero, else false.
+	 */
+	public boolean isZero() {
+		return this.get_coefficient() == 0;
+	}
+
+	// ***************** add your code below **********************
+
+	/**
+	 * function thats get monom as a string, and define a coefficient and power.
+	 * 
+	 * @param s represent a monom as a string.
 	 */
 	public Monom(String s) {
 		// scan the string in order to check if there is an illegal sign.
@@ -77,7 +111,7 @@ public class Monom implements function{
 		double prenum = 0, postnum = 0, num = 0, power = 1;
 		boolean negativeflag = false;
 		// Zero monom
-		if ((s.charAt(0) == '0' || s == "")&&(s.length()-1>0&&s.charAt(1)!='.')) {
+		if (s.charAt(0) == '0' || s == "") {
 			this._coefficient = 0;
 			this._power = 0;
 			return;
@@ -146,55 +180,72 @@ public class Monom implements function{
 			power = cast(s.substring(i, s.length()));
 		this._power = (int) power;
 	}
-	
-/**
- * a void function that gets a monom object and add it to this monom
- * @param m - A monom type object that have been added to our monom
- */
+
+	/**
+	 * This function add m monom to this monom, only if they got the same power.
+	 * 
+	 * @param m is the monom that we adding to this.
+	 */
 	public void add(Monom m) {
-		if(this._power!=m._power) {
-			throw new  ArithmeticException("its not a monom");
-		}
-		else {
-			this._coefficient=this._coefficient+m._coefficient;
-		}
+		if (m._power == this._power)
+			this._coefficient += m._coefficient;
+		else
+			throw new RuntimeException("ERR the power of Monoms should  be even if you want to add ");
 	}
 
+	/**
+	 * This function multiply m monom to this monom.
+	 * 
+	 * @param d the monom that we multiplying with this monom.
+	 */
 	public void multipy(Monom d) {
-		this._coefficient=this._coefficient*d._coefficient;
-		this._power=this._power+d._power;
+		this._power += d._power;
+		this._coefficient *= d._coefficient;
 	}
 
+	/**
+	 * Presenting this monom as a string.
+	 */
 	public String toString() {
-		String ans = "";
-		if(this._coefficient==0) return "0";
-		if(this._coefficient==1&&this._power==1)ans= "x"; 
-		if(this._coefficient==-1&&this._power==1)ans= "-x"; 
-		if(this._power==0)ans= this._coefficient+"";
-		if(this._coefficient!=1&&this._coefficient!=-1&&this._power>1)
-
-			ans= this._coefficient+"x^"+this._power;
-		if(this._coefficient==1&&this._power>1)
-			ans="x^"+this._power;
-		if(this._coefficient==-1&&this._power>1)
-			ans="-x^"+this._power;
-		if((this._coefficient<1&&this._coefficient>0&&this._power==1)||this._coefficient>1&&this._power==1)
-			ans=this._coefficient+"x";
-		if((this._coefficient>-1&&this._coefficient<0&&this._power==1)||this._coefficient<-1&&this._power==1)
-			ans=this._coefficient+"x";
-
-		return ans;
-
+		if (this._coefficient == 0)
+			return "0";
+		else if (this._power == 1 && (this._coefficient == 1 || this._coefficient == -1))
+			return (this._coefficient == 1) ? "x" : "-x";
+		else if (this._power == 1 && this._coefficient != 1)
+			return this._coefficient + "x";
+		else if (this._power != 0 && (this._coefficient == -1 || this._coefficient == 1) && this._power != 1)
+			return (this._coefficient == 1) ? "x^" + this._power : "-x^" + this._power;
+		else if (this._power == 0)
+			return "" + this._coefficient;
+		else
+			return this._coefficient + "x^" + this._power;
 	}
 	// you may (always) add other methods.
-	
+
+	/**
+	 * This function checking if m monom and this monom are equals.
+	 * 
+	 * @param m us the monom the we equaling to this monom.
+	 * @return true if m and this monom are equal, else false.
+	 */
+	public boolean equals(Monom m) {
+		if (this._coefficient == m._coefficient && this._power == m._power)
+			return true;
+		else if (this._coefficient == m._coefficient + EPSILON && this._power == m._power)
+			return true;
+		else if (this._coefficient == m._coefficient - EPSILON && this._power == m._power)
+			return true;
+		else
+			return false;
+	}
+
 	/**
 	 * This function is casting integer number,from string to int.
 	 * 
 	 * @param num is the number that we casting.
 	 * @return the number thar we casted as a double.
 	 */
-	private double cast(String num) {
+	public double cast(String num) {
 		// casting by ASCII table
 		double ans = 0;
 		for (int i = 0; i < num.length(); i++) {
@@ -209,7 +260,7 @@ public class Monom implements function{
 	 * @param num is the number that we casting.
 	 * @return the number that we casted as double<1.
 	 */
-	private static double afterDotCast(String num) {
+	public static double afterDotCast(String num) {
 		// casting by ASCII table
 		double ans = 0;
 		for (int i = 0; i < num.length(); i++) {
@@ -217,44 +268,24 @@ public class Monom implements function{
 		}
 		return ans;
 	}
+	// ****************** Private Methods and Data *****************
 
-	/**
-	 * auxiliary function thats compare this monom to another monom and returns a boolean variable.
-	 * @param m - monom that compared to this monom .
-	 * @return
-	 */
-	public boolean equals(Monom m) {
-		if(this._coefficient==0&&m._coefficient==0) {
-			return true;
-		}
-		if(this._coefficient!=m._coefficient||this._power!=m._power) {
-			return false;
-		}
-		return true;
-	}
-	//****************** Private Methods and Data *****************
-
-	private void set_coefficient(double a){
+	private void set_coefficient(double a) {
 		this._coefficient = a;
 	}
+
 	private void set_power(int p) {
-		if(p<0) {throw new ArithmeticException("ERR the power of Monom should not be negative, got: "+p);}
+		if (p < 0) {
+			throw new RuntimeException("ERR the power of Monom should not be negative, got: " + p);
+		}
 		this._power = p;
 	}
-	private static Monom getNewZeroMonom() {return new Monom(ZERO);}
-	private double _coefficient; 
+
+	private static Monom getNewZeroMonom() {
+		return new Monom(ZERO);
+	}
+
+	private double _coefficient;
 	private int _power;
-	@Override
-	public function initFromString(String s) {
-		function f=new Monom(s);
-		return f;
-	}
-	@Override
-	public function copy() {
-		function f=new Monom(this.toString());
-		return f;
-	}
-
-
 
 }
