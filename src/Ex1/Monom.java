@@ -77,7 +77,7 @@ public class Monom implements function{
 		double prenum = 0, postnum = 0, num = 0, power = 1;
 		boolean negativeflag = false;
 		// Zero monom
-		if ((s.charAt(0) == '0' || s == "")&&(s.length()>0&&s.charAt(1)!='.')) {
+		if ((s.charAt(0) == '0' || s == "")&&(s.length()-1>0&&s.charAt(1)!='.')) {
 			this._coefficient = 0;
 			this._power = 0;
 			return;

@@ -28,24 +28,29 @@ public class Functions_GUI implements functions{
 	public static void main(String[] args) throws IOException {
 		String file="C:\\Users\\Yogev\\Desktop\\.metadata\\.metadata\\ObjectOrientedEx2\\functions.json";
 		Functions_GUI s=new Functions_GUI();
-//		s.add(new ComplexFunction(new Polynom("x"), new Polynom("2x"), Operation.Plus));
-//		s.add(new Polynom("x^2"));
-//		s.add(new Polynom("x^3"));
-//		s.add(new Polynom("x^4"));
-//		s.add(new Polynom("x^5"));
-//		s.add(new Polynom("x^6"));
-//		s.add(new Polynom("x^7"));
-//		s.add(new Polynom("x"));
+		s.add(new ComplexFunction(new Polynom("x"), new Polynom("2x"), Operation.Plus));
+		s.add(new Polynom("x^2"));
+		s.add(new Polynom("x^3"));
+		s.add(new Polynom("x^4"));
+		s.add(new Polynom("x^5"));
+		s.add(new Polynom("x^6"));
+		s.add(new Polynom("x^7"));
+		s.add(new Polynom("x"));
 		//		s.saveToFile(file);
-		s.initFromFile("C:\\Users\\Yogev\\Desktop\\function_file.txt");
-//		Range x= new Range(-5, 5);
-//		Range y= new Range(-5, 5);
+		//s.initFromFile("C:\\Users\\Yogev\\Desktop\\function_file.txt");
+		//		Range x= new Range(-5, 5);
+		//		Range y= new Range(-5, 5);
 		//s.drawFunctions(500,500, x, y, 100);
 		//s.drawFunctions("C:\\\\Users\\\\Yogev\\\\Desktop\\\\.metadata\\\\.metadata\\\\ObjectOrientedEx2\\\\GUI_params.json");
+		//s.saveToFile("C:\\Users\\Yogev\\Desktop\\newfunction.csv");
+		Functions_GUI g=new Functions_GUI();
+		g.initFromFile("function_file.txt");
+		g.drawFunctions("GUI_params.txt");
 	}
 
 
-	LinkedList <function> c=new LinkedList<function>();
+	LinkedList <function> c=new LinkedList<function>();// the object that we store the functions.
+
 
 	@Override
 	public void initFromFile(String file) throws IOException {
@@ -53,13 +58,13 @@ public class Functions_GUI implements functions{
 		ComplexFunction cf=new ComplexFunction();
 		try 
 		{
-			int i=0;
-        	BufferedReader br = new BufferedReader(new FileReader(file));
-        	while((line=br.readLine())!=null) {
-        		this.add(cf.initFromString(line));
-        		System.out.println(c.get(i));
-        		i++;
-        	}
+			BufferedReader br = new BufferedReader(new FileReader(file));//for read from file
+			while((line=br.readLine())!=null) {
+				function t=(function) cf.initFromString(line);
+				if(t!=null) {
+					this.add(cf.initFromString(line));//add the function to the collection
+				}
+			}
 		} 
 		catch (IOException e) {
 			System.out.println("File not found");
@@ -69,22 +74,26 @@ public class Functions_GUI implements functions{
 
 	@Override
 	public void saveToFile(String file) throws IOException {
-		Gson gson = new Gson();
-		String json = gson.toJson(this);
-		System.out.println(json);
-		try 
-		{
-			PrintWriter pw = new PrintWriter(new File("functions.json"));
-			pw.write(json);
+		try {
+			PrintWriter pw = new PrintWriter(new File(file));//for write to a file
+			StringBuilder sb=new StringBuilder();
+
+			for (int i = 0; i < this.c.size(); i++) {
+				sb.append(c.get(i).toString());//write each function
+				sb.append("\n");
+			}
+			pw.write(sb.toString());//write to the print writer
 			pw.close();
-		} 
-		catch (FileNotFoundException e) 
-		{
-			e.printStackTrace();
-			System.out.println("File not found");
-			return;
 		}
+		catch(IOException e) {
+			e.printStackTrace();
+			return;
+
+		}
+
+
 	}
+
 
 	@Override
 	public void drawFunctions(int width, int height, Range rx, Range ry, int resolution) {
@@ -102,12 +111,12 @@ public class Functions_GUI implements functions{
 		for (int i = (int)rx.get_min(); i <=rx.get_max(); i++) {
 			StdDraw.line(i, ry.get_min(), i, ry.get_max());
 		}
-		
+
 		//horizontal lines
 		for (double i =ry.get_min(); i <=ry.get_max(); i++) {
 			StdDraw.line(rx.get_min(), i, rx.get_max(), i);
 		}
-		
+
 		//////// x axis
 		StdDraw.setPenColor(Color.BLACK);
 		StdDraw.setPenRadius(0.005);
@@ -116,7 +125,7 @@ public class Functions_GUI implements functions{
 		for (int i = (int)rx.get_min(); i <= rx.get_max(); i++) {
 			StdDraw.text(i-0.07,-0.2, Integer.toString(i));
 		}
-		
+
 		//////// y axis
 		StdDraw.line(0,ry.get_min(),0,ry.get_max());
 		for (int i = (int)ry.get_min(); i <= ry.get_max(); i++) {
@@ -159,18 +168,18 @@ public class Functions_GUI implements functions{
 		long width = (long) jo.get("Width"); 
 		long height = (long) jo.get("Height"); 
 		long resolution =(long) jo.get("Resolution");
-		
+
 		JSONArray arrx=(JSONArray) jo.get("Range_X");
 		JSONArray arry=(JSONArray) jo.get("Range_Y");
-		
+
 		long minx=(long)arrx.get(0);
 		long maxx=(long)arrx.get(1);
 		long miny=(long)arry.get(0);
 		long maxy=(long)arry.get(1);
-		
+
 		Range rx=new Range(minx,maxx);
 		Range ry=new Range(miny,maxy);
-		
+
 		this.drawFunctions((int)width, (int)height, rx, ry,(int) resolution);
 	}
 

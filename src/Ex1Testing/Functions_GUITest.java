@@ -1,7 +1,15 @@
 package Ex1Testing;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.Iterator;
 
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +34,7 @@ import Ex1.functions;
 5) java.awt.Color[r=0,g=255,b=0]  f(x)= max(max(max(max(plus(-1.0x^4 +2.4x^2 +3.1,+0.1x^5 -1.2999999999999998x +5.0),plus(div(+1.0x +1.0,mul(mul(+1.0x +3.0,+1.0x -2.0),+1.0x -4.0)),2.0)),div(plus(-1.0x^4 +2.4x^2 +3.1,+0.1x^5 -1.2999999999999998x +5.0),-1.0x^4 +2.4x^2 +3.1)),-1.0x^4 +2.4x^2 +3.1),+0.1x^5 -1.2999999999999998x +5.0)
 6) java.awt.Color[r=255,g=175,b=175]  f(x)= min(min(min(min(plus(-1.0x^4 +2.4x^2 +3.1,+0.1x^5 -1.2999999999999998x +5.0),plus(div(+1.0x +1.0,mul(mul(+1.0x +3.0,+1.0x -2.0),+1.0x -4.0)),2.0)),div(plus(-1.0x^4 +2.4x^2 +3.1,+0.1x^5 -1.2999999999999998x +5.0),-1.0x^4 +2.4x^2 +3.1)),-1.0x^4 +2.4x^2 +3.1),+0.1x^5 -1.2999999999999998x +5.0)
 
- * @author boaz_benmoshe
+ * @author boaz_benmoshe 
  *
  */
 class Functions_GUITest {
@@ -50,23 +58,47 @@ class Functions_GUITest {
 		data.drawFunctions(JSON_param_file);
 	}
 	private functions _data=null;
-//	@BeforeAll
-//	static void setUpBeforeClass() throws Exception {
-//	}
-
+	static int i=1;
+	
+	@BeforeClass
+	public static void bfrClass() {
+		System.out.println("Functions_GUI Test");
+	}
+	@AfterClass
+	public static void aftClass() {
+		System.out.println("Finished Test");
+	}
 	@BeforeEach
 	void setUp() throws Exception {
+		System.out.println("Test number "+i);
+		i++;
 		_data = FunctionsFactory();
 	}
 
-	//@Test
-	void testFunctions_GUI() {
-	//	fail("Not yet implemented");
-	}
+//	@Test
+//	void testFunctions_GUI() {
+//		
+//	}
 
-	//@Test
+	@Test
 	void testInitFromFile() {
-	//	fail("Not yet implemented");
+		String file="function_file.txt";
+		try {
+			_data.clear();
+			_data.initFromFile(file);
+			_data.saveToFile("function_file2.txt");
+			functions tmp1=FunctionsFactory();
+			functions tmp2=FunctionsFactory();
+			tmp1.initFromFile(file);
+			tmp2.initFromFile("function_file2.txt");
+			Functions_GUI tmp3 = (Functions_GUI) tmp1;
+			Functions_GUI tmp4 = (Functions_GUI) tmp2;
+			System.out.println(Arrays.toString(tmp3.toArray()));
+			System.out.println(Arrays.toString(tmp4.toArray()));
+			assertEquals(tmp3.toArray(), tmp4.toArray());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	//@Test
@@ -75,17 +107,6 @@ class Functions_GUITest {
 		
 	}
 
-	//@Test
-	void testDrawFunctions() {
-		//_data.drawFunctions();
-	//	fail("Not yet implemented");
-	}
-
-	@Test
-	void testDrawFunctionsIntIntRangeRangeInt() {
-		_data.drawFunctions("GUI_params.txt");
-		//fail("Not yet implemented");
-	}
 	public static functions FunctionsFactory() {
 		functions ans = new Functions_GUI();
 		String s1 = "3.1+2.4x^2-x^4";

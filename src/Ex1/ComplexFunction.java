@@ -1,5 +1,7 @@
 package Ex1;
 
+import java.util.Stack;
+
 import javax.management.RuntimeErrorException;
 
 public class ComplexFunction implements complex_function {
@@ -13,13 +15,18 @@ public class ComplexFunction implements complex_function {
 	}
 
 	/**
-	 * A two functions constructor
+	 * A two functions constructor , if the operation is none - in some cases its throw exception
+	 * if the operation is error - automatically  its throw exception
 	 * @param f1 - the left function of this complex function
 	 * @param f2 - the right function of this complex function
 	 * @param op - the operation between the two this functions
 	 */
 	public ComplexFunction(function f1,function f2,Operation op) {
-		tree.root=new Node(f1,f2,op);
+		if(op==Operation.None&&f1==null&&f2==null) throw new ArithmeticException("Illegal operation!");
+		else if(op==Operation.None&&f1!=null&&f2!=null) throw new ArithmeticException("Illegal operation!");
+		else if((op!=Operation.None&&op!=Operation.Error)&&(f1==null||f2==null)) throw new ArithmeticException("Illegal operation!");
+		else if(op==Operation.Error) throw new ArithmeticException("Illegal operation!");
+		else tree.root=new Node(f1,f2,op);
 	}
 
 	/**
@@ -40,20 +47,37 @@ public class ComplexFunction implements complex_function {
 		if(s.equals("")) {
 			return null;
 		}
-		for (int count=0, i = 0; i < s.length(); i++) {//checking the '()' balance
-			if(s.charAt(i)=='(') count++;
-			if(s.charAt(i)==')') {
-				if(count>0)count--;
-				else throw new ArithmeticException("its illegal complex function");
-			}
-			if(i==s.length()-1&&count!=0) throw new ArithmeticException("its illegal complex function");
-		}
+		isLegal(s);//checking if s is legal complex function
 		if(s.charAt(0)>'z'||s.charAt(0)<'a'||s.charAt(0)=='x') {//return polynom if there is no operator
 			return new Polynom(s);
 		}
 		ComplexFunction func =new ComplexFunction();
 
 		return IFS(s, func);
+	}
+
+	/**
+	 * function that checking the balance between the "()", and ","
+	 * if its illegal throw exception.
+	 * @param s is the string of the complex functions that we checking on
+	 */
+	private void isLegal(String s) {
+		Stack<Character> tmp= new Stack<>();
+		for (int i = 0; i < s.length(); i++) {
+			if(s.charAt(i)=='(') {
+				tmp.push(s.charAt(i));
+			}
+			if(s.charAt(i)==',') {
+				tmp.push(s.charAt(i));
+			}
+			if(s.charAt(i)==')') {
+				if(tmp.isEmpty()||tmp.peek()!=',') throw new ArithmeticException("its illegal complex function");
+				tmp.pop();
+				if(tmp.isEmpty()||tmp.peek()!='(') throw new ArithmeticException("its illegal complex function");
+				tmp.pop();
+			}
+		}
+		if(!tmp.isEmpty()) throw new ArithmeticException("its illegal complex function");
 	}
 
 	/**
@@ -431,10 +455,7 @@ public class ComplexFunction implements complex_function {
 
 
 	public static void main(String[] args) {
-		ComplexFunction g=new ComplexFunction();
-		ComplexFunction s=(ComplexFunction) g.initFromString("plus(div(+1.0x +1.0,mul(mul(+1.0x +3.0,+1.0x -2.0),+1.0x -4.0)),2.0)");
-		System.out.println("plus(div(+1.0x +1.0,mul(mul(+1.0x +3.0,+1.0x -2.0),+1.0x -4.0)),2.0)");
-		System.out.println(s);
+		ComplexFunction f=new ComplexFunction(null,null,Operation.None);
 		
 	}
 
