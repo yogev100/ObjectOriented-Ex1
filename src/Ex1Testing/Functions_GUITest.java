@@ -1,26 +1,27 @@
 package Ex1Testing;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Iterator;
-
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import Ex1.ComplexFunction;
 import Ex1.Functions_GUI;
 import Ex1.Monom;
 import Ex1.Operation;
 import Ex1.Polynom;
-import Ex1.Range;
 import Ex1.function;
 import Ex1.functions;
+
 /**
  * Note: minor changes (thanks to Amichai!!)
  * The use of "get" was replaced by iterator!
@@ -38,25 +39,6 @@ import Ex1.functions;
  *
  */
 class Functions_GUITest {
-	public static void main(String[] a) {
-		functions data = FunctionsFactory();
-	//	int w=1000, h=600, res=200;
-	//	Range rx = new Range(-10,10);
-	//	Range ry = new Range(-5,15);
-//		data.drawFunctions(w,h,rx,ry,res);
-		String file = "function_file.txt";
-		String file2 = "function_file2.txt";
-		try {
-			data.saveToFile(file);
-			Functions_GUI data2 = new Functions_GUI();
-			data2.initFromFile(file);
-			data.saveToFile(file2);
-		}
-		catch(Exception e) {e.printStackTrace();}
-		
-		String JSON_param_file = "GUI_params.txt";
-		data.drawFunctions(JSON_param_file);
-	}
 	private functions _data=null;
 	static int i=1;
 	
@@ -64,47 +46,104 @@ class Functions_GUITest {
 	public static void bfrClass() {
 		System.out.println("Functions_GUI Test");
 	}
+	
 	@AfterClass
 	public static void aftClass() {
 		System.out.println("Finished Test");
 	}
+
 	@BeforeEach
 	void setUp() throws Exception {
 		System.out.println("Test number "+i);
 		i++;
 		_data = FunctionsFactory();
 	}
-
-//	@Test
-//	void testFunctions_GUI() {
-//		
-//	}
+	
+	@Test
+	void testException() {
+		Functions_GUI s= new Functions_GUI();
+		s.addAll(_data);
+		assertThrows(NumberFormatException.class, () -> s.add(new Polynom("4x^5+2s")));
+	}
 
 	@Test
 	void testInitFromFile() {
 		String file="function_file.txt";
 		try {
-			_data.clear();
-			_data.initFromFile(file);
-			_data.saveToFile("function_file2.txt");
+			_data.clear();//remove all the elements
+			_data.initFromFile(file);//initialize new function colection from file
+			_data.saveToFile("function_file2.txt");//save this collection to another file
 			functions tmp1=FunctionsFactory();
 			functions tmp2=FunctionsFactory();
-			tmp1.initFromFile(file);
-			tmp2.initFromFile("function_file2.txt");
+			tmp1.initFromFile(file);//create a new collection from the old file - function_file
+			tmp2.initFromFile("function_file2.txt");//create a new collection from the new file - function_file2
 			Functions_GUI tmp3 = (Functions_GUI) tmp1;
 			Functions_GUI tmp4 = (Functions_GUI) tmp2;
-			System.out.println(Arrays.toString(tmp3.toArray()));
-			System.out.println(Arrays.toString(tmp4.toArray()));
-			assertEquals(tmp3.toArray(), tmp4.toArray());
+			for (int i = 0; i < tmp3.size(); i++) {
+				assertEquals(tmp3.c.get(i), tmp4.c.get(i));//comparing the two collections
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	//@Test
+	@Test
 	void testSaveToFile() {
+		/*
+		 * same idea like the test above, the diffence is using buffered reader,
+		 *  inorder to test the initfromstring.
+		 */
+		String file="function_file.txt";
+		try {
+			ComplexFunction cf = new ComplexFunction();
+			Functions_GUI tmp = new Functions_GUI();
+			tmp.initFromFile(file);
+			tmp.saveToFile("function_file1.txt");
+			String line1="",line2="";
+			BufferedReader bf = new BufferedReader(new FileReader(file));
+			BufferedReader bf2 = new BufferedReader(new FileReader("function_file1.txt"));
+			line2=bf2.readLine(); line1=bf.readLine();
+			while((line1!=null)||(line2!=null)) {
+				assertEquals(cf.initFromString(line1),cf.initFromString(line2));
+				line2=bf2.readLine(); line1=bf.readLine();
+			}
+			if(line1!=null||line2!=null) fail();
+			bf.close();
+			bf2.close();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
-		
+	}
+
+	//General tests to the functionGUI
+	@Test
+	void test1() {
+		assertEquals(7, _data.size());
+		for (int i = 1; i < 10; i++) {
+			_data.add(new Monom("4x"));
+			assertEquals(7+i, _data.size());
+		}
+		_data.clear();
+		assertEquals(0, _data.size());
+	}
+
+	@Test
+	void test2() {
+		assertFalse(_data.isEmpty());	
+		_data.removeAll(_data);
+		assertTrue(_data.isEmpty());
+		_data.add(new Polynom("4x^2+5x+2"));
+		assertTrue(_data.contains(new Polynom("4x^2+5x+2")));
+	}
+	
+	@Test
+	void test3() {
+		Object []arr=_data.toArray();
+		for (int i = 0; i < arr.length; i++) {
+			assertTrue(arr[i]==((Functions_GUI)_data).c.get(i));
+		}
 	}
 
 	public static functions FunctionsFactory() {
@@ -119,7 +158,6 @@ class Functions_GUITest {
 		for(int i=1;i<s3.length;i++) {
 			cf3.mul(new Polynom(s3[i]));
 		}
-		
 		ComplexFunction cf = new ComplexFunction( p1,p2,Operation.Plus);
 		ComplexFunction cf4 = new ComplexFunction( new Polynom("x+1"),cf3,Operation.Divid);
 		cf4.plus(new Monom("2"));
@@ -127,7 +165,6 @@ class Functions_GUITest {
 		ans.add(cf4.copy());
 		cf.div(p1);
 		ans.add(cf.copy());
-		String s = cf.toString();
 		function cf5 = cf4.initFromString(s1);
 		function cf6 = cf4.initFromString(s2);
 		ans.add(cf5.copy());
@@ -142,7 +179,7 @@ class Functions_GUITest {
 			min.min(f);
 		}
 		ans.add(max);
-		ans.add(min);		
+		ans.add(min);
 		return ans;
 	}
 }

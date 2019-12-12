@@ -226,31 +226,36 @@ public class Polynom implements Polynom_able{
 
 	@Override
 	/**
-	 * a function that returns a boolean object if this polynom is equal to Polynom_able p1.
+	 * a function that returns a boolean object if this polynom is logically equal to another function.
+	 * @param p1-function that compared to this polynom .
+	 * @return - a boolean object
 	 */
+
 	public boolean equals(Object p1) {
-		if(p1 instanceof Polynom) {
-			Polynom p=(Polynom)p1;
-			int count=0;
-			Iterator<Monom> c=p.iteretor();
-			while(c.hasNext()) {
-				Monom t=c.next();
-				count++;
-			}
-			if(pol.size()!=count) {
-				return false;
-			}
-			Iterator<Monom> checkp=p.iteretor();
-			Iterator<Monom> ofpol=pol.iterator();
-			while(checkp.hasNext()) {
-				Monom temp1=checkp.next();
-				Monom temp2=ofpol.next();
-				if((!coefequals(temp1, temp2)||temp1.get_power()!=temp2.get_power())) {
-					return false;
+		if(p1 instanceof function) {
+			function other=(function)p1;
+			for (int i = -100; i < 100; i++) {/*loop that checks 
+			in range -100 to 100 if this complex function and other function with the same value in f(x)*/
+
+				if(i!=0) {
+
+					if(!coeefequals(this.f(i), other.f(i))) {
+						return false;
+					}
 				}
 			}
+			return true;
 		}
-		return true;
+		return false;
+	
+	}
+	private boolean coeefequals(double x,double y) {
+		int a=(int) (x*10000);
+		int b=(int) (y*10000);
+		x=a/10000;
+		y=b/10000;
+		if(x==y) return true;
+		else return false;
 	}
 	
 	private boolean coefequals(Monom tmp1,Monom tmp2) {
@@ -429,11 +434,7 @@ public class Polynom implements Polynom_able{
 		function f=new Polynom(s);
 		return f;
 	}
-	
-	public static void main(String[] args) {
-		Polynom s= new Polynom("0.1x^5 -18x +5.0");
-		System.out.println(s);
-	}
+
 
 
 }

@@ -338,11 +338,12 @@ public class ComplexFunction implements complex_function {
 	public boolean equals(Object obj1) {
 		if(obj1 instanceof function) {
 			function other=(function)obj1;
-			for (int i = -100; i < 101; i++) {/*loop that checks 
+			for (int i = -100; i < 100; i++) {/*loop that checks 
 			in range -100 to 100 if this complex function and other function with the same value in f(x)*/
 
 				if(i!=0) {
-					if(this.f(i)!=other.f(i)) {
+
+					if(!coeefequals(this.f(i), other.f(i))) {
 						return false;
 					}
 				}
@@ -351,7 +352,21 @@ public class ComplexFunction implements complex_function {
 		}
 		return false;
 	}
-
+	
+	/**
+	 *  a side function that cuts tow numbers up to 4 digits after the point and check if they are equals
+	 * @param x - the first number
+	 * @param y - the second number
+	 * @return a boolean object
+	 */
+	private boolean coeefequals(double x,double y) {
+		int a=(int) (x*10000);
+		int b=(int) (y*10000);
+		x=a/10000;
+		y=b/10000;
+		if(x==y) return true;
+		else return false;
+	}
 	/**
 	 * Recursive side function that running over the tree and computing each complex function with its operation 
 	 * from the most inner complex function to the outer complex function
@@ -451,12 +466,6 @@ public class ComplexFunction implements complex_function {
 				return node.f1+"";
 			}
 		}
-	}
-
-
-	public static void main(String[] args) {
-		ComplexFunction f=new ComplexFunction(null,null,Operation.None);
-		
 	}
 
 }

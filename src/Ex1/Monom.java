@@ -219,18 +219,36 @@ public class Monom implements function{
 	}
 
 	/**
-	 * auxiliary function thats compare this monom to another monom and returns a boolean variable.
-	 * @param m - monom that compared to this monom .
-	 * @return
+	 * a function that returns a boolean object if this monom is logically equal to another function.
+	 * @param p1 - function that compared to this monom .
+	 * @return a boolean object
 	 */
-	public boolean equals(Monom m) {
-		if(this._coefficient==0&&m._coefficient==0) {
+	
+	public boolean equals(Object p1) {
+		if(p1 instanceof function) {
+			function other=(function)p1;
+			for (int i = -100; i < 100; i++) {/*loop that checks 
+			in range -100 to 100 if this complex function and other function with the same value in f(x)*/
+
+				if(i!=0) {
+
+					if(!coeefequals(this.f(i), other.f(i))) {
+						return false;
+					}
+				}
+			}
 			return true;
 		}
-		if(this._coefficient!=m._coefficient||this._power!=m._power) {
-			return false;
-		}
-		return true;
+		return false;
+	
+	}
+	private boolean coeefequals(double x,double y) {
+		int a=(int) (x*10000);
+		int b=(int) (y*10000);
+		x=a/10000;
+		y=b/10000;
+		if(x==y) return true;
+		else return false;
 	}
 	//****************** Private Methods and Data *****************
 
@@ -254,7 +272,6 @@ public class Monom implements function{
 		function f=new Monom(this.toString());
 		return f;
 	}
-
 
 
 }

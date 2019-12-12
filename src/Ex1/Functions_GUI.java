@@ -49,7 +49,7 @@ public class Functions_GUI implements functions{
 	}
 
 
-	LinkedList <function> c=new LinkedList<function>();// the object that we store the functions.
+	public LinkedList <function> c=new LinkedList<function>();// the object that we store the functions.
 
 
 	@Override
